@@ -1,0 +1,147 @@
+---
+import '../styles/global.css';
+const url = import.meta.env.PUBLIC_SUPABASE_URL || '';
+const key = import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY || '';
+---
+<html lang="pt-BR">
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Meu espaço / Social Salad</title><meta name="robots" content="noindex,nofollow"/></head>
+<body class="salad-app dots" data-url={url} data-key={key}>
+<div class="loading" id="loading">social salad / abrindo seu espaço...</div>
+<section class="auth hidden" id="auth">
+ <a href="/" class="mark">✳ social<span>salad</span>.</a>
+ <span class="eyebrow">ARQUIVOS SALADA / ACESSO PRIVADO</span>
+ <h1>seu espaço.<br/><em>sem bagunça.</em></h1>
+ <p>Entre na sua central de trabalho. O acesso é exclusivo aos usuários autorizados.</p>
+ <form id="login"><label for="email">E-MAIL</label><input id="email" type="email" autocomplete="username" required placeholder="voce@exemplo.com"/><label for="password">SENHA</label><input id="password" type="password" autocomplete="current-password" required minlength="6"/><button class="primary">entrar no meu espaço ↗</button></form>
+ <p class="feedback" id="auth-message" role="status"></p>
+ <a class="back" href="/">← voltar à home</a>
+</section>
+<div class="workspace hidden" id="workspace">
+ <aside class="side">
+ <a class="mark" href="/">✳ social<span>salad</span>.</a><div class="eyebrow">CENTRAL DE TRABALHO / 001</div>
+ <nav class="main-nav" aria-label="Áreas">
+ <button data-view="dashboard" class="selected">▦ <span>Visão geral</span></button>
+ <button data-view="marcas">◇ <span>Marcas</span></button>
+ <button data-view="conteudo">▤ <span>Conteúdo</span></button>
+ <button data-view="tarefa">☑ <span>Tarefas</span></button>
+ <button data-view="campanha">✳ <span>Campanhas</span></button>
+ </nav>
+ <div class="side-bottom"><small id="account-email"></small><button id="logout">sair da conta ↗</button></div>
+ </aside>
+ <main class="main">
+ <header class="app-top"><a href="/" class="mark mobile-mark">✳ social<span>salad</span>.</a><span class="eyebrow" id="crumb">ARQUIVOS / DASHBOARD</span><button id="quick-add" class="new">+ NOVO</button></header>
+ <div class="main-content">
+  <div class="headline"><span class="eyebrow">SOCIAL SALAD / MEU ESPAÇO</span><h1 id="page-title">tudo em<br/><em>seu lugar.</em></h1><p id="page-summary">Acompanhe suas marcas e suas entregas, em um lugar só.</p></div>
+  <div id="dashboard-panel">
+   <div class="stat-grid"><div><small>MARCAS</small><strong id="stat-brands">0</strong></div><div><small>CONTEÚDOS</small><strong id="stat-content">0</strong></div><div><small>TAREFAS</small><strong id="stat-tasks">0</strong></div><div class="pink"><small>CAMPANHAS</small><strong id="stat-campaigns">0</strong></div></div>
+   <div class="section-title"><span>01 / PRÓXIMAS ENTREGAS</span><button data-create="tarefa">criar tarefa ↗</button></div><div id="upcoming" class="items"></div>
+  </div>
+  <div id="list-panel" class="hidden">
+   <div class="toolbar"><select id="brand-filter" aria-label="Filtrar por marca"><option value="">Todas as marcas</option></select><select id="status-filter" aria-label="Filtrar por status"><option value="">Todos os status</option><option value="ideia">Ideia</option><option value="producao">Em produção</option><option value="revisao">Revisão</option><option value="agendado">Agendado</option><option value="concluido">Concluído</option></select><button id="new-in-view" class="new">+ ADICIONAR</button></div>
+   <div id="records" class="items"></div>
+  </div>
+  <p class="feedback" id="global-message" role="status"></p>
+ </div>
+ </main>
+ <nav class="mobile-nav" aria-label="Navegação"><button data-view="dashboard" class="selected"><span>▦</span>Início</button><button data-view="marcas"><span>◇</span>Marcas</button><button data-view="conteudo"><span>▤</span>Conteúdo</button><button data-view="tarefa"><span>☑</span>Tarefas</button><button data-view="campanha"><span>✳</span>Campanhas</button></nav>
+</div>
+<dialog id="editor"><form id="editor-form">
+<div class="dialog-head"><div><span class="eyebrow">ARQUIVOS / NOVO REGISTRO</span><h2 id="editor-title">Novo item</h2></div><button type="button" id="close-editor" aria-label="Fechar">×</button></div>
+<input type="hidden" name="id" id="item-id"/>
+<label for="item-title">NOME / TÍTULO</label><input id="item-title" name="title" maxlength="200" required/>
+<div id="item-fields">
+<label for="item-brand">MARCA</label><select id="item-brand" name="brand_id"><option value="">Sem marca</option></select>
+<div class="field-pair"><div><label for="item-status">STATUS</label><select id="item-status" name="status"><option value="ideia">Ideia</option><option value="producao">Em produção</option><option value="revisao">Revisão</option><option value="agendado">Agendado</option><option value="concluido">Concluído</option></select></div><div><label for="item-date">DATA</label><input type="date" id="item-date" name="due_date"/></div></div>
+<label for="item-channel">CANAL / FORMATO (OPCIONAL)</label><input id="item-channel" name="channel" maxlength="100" placeholder="Instagram, Reels..."/>
+</div>
+<label for="item-description">DESCRIÇÃO</label><textarea id="item-description" name="description" rows="4" maxlength="10000"></textarea>
+<p class="feedback" id="editor-message" role="status"></p><button class="primary" type="submit" id="save-item">salvar ↗</button>
+</form></dialog>
+<script type="module" is:inline>
+import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.57.0';
+const $=id=>document.getElementById(id), $$=s=>[...document.querySelectorAll(s)];
+const url=document.body.dataset.url,key=document.body.dataset.key;
+const db=url&&key?createClient(url,key):null;
+const labels={dashboard:['tudo em','seu lugar.','Acompanhe suas marcas e suas entregas, em um lugar só.'],marcas:['cada marca,','seu mundo.','Organize cada marca no seu próprio espaço.'],conteudo:['ideias com','direção.','Pautas, roteiros, canais e datas de publicação.'],tarefa:['o que precisa','acontecer.','Demandas, prioridades e próximos passos.'],campanha:['projetos com','história.','Coleções, campanhas e lançamentos.']};
+const state={view:'dashboard',brands:[],items:[],editingKind:'tarefa',user:null};
+const show=(id,yes)=>$(id).classList.toggle('hidden',!yes);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const say=(id,msg)=>{$(id).textContent=msg;};
+const date=v=>v?new Date(v+'T12:00:00').toLocaleDateString('pt-BR'):'sem prazo';
+function empty(msg){return '<div class="empty"><span>✳ ARQUIVOS SALADA</span><p>'+esc(msg)+'</p></div>'}
+async function load(){
+ const [b,i]=await Promise.all([db.from('brands').select('*').order('created_at',{ascending:false}),db.from('work_items').select('*').order('created_at',{ascending:false})]);
+ if(b.error||i.error)throw Error(b.error?.message||i.error?.message);
+ state.brands=b.data||[];state.items=i.data||[];
+ render();
+}
+function options(){
+ $('brand-filter').innerHTML='<option value="">Todas as marcas</option>'+state.brands.map(b=>'<option value="'+esc(b.id)+'">'+esc(b.name)+'</option>').join('');
+ $('item-brand').innerHTML='<option value="">Sem marca</option>'+state.brands.map(b=>'<option value="'+esc(b.id)+'">'+esc(b.name)+'</option>').join('');
+}
+function row(item,kind){
+ const brand=state.brands.find(b=>b.id===item.brand_id);
+ return '<article class="record"><div class="record-content"><span class="eyebrow">'+esc(kind==='marcas'?'MARCA / '+date(item.created_at?.slice(0,10)):item.kind.toUpperCase()+' / '+date(item.due_date))+'</span><h3>'+esc(kind==='marcas'?item.name:item.title)+'</h3><small>'+esc(kind==='marcas'?item.description:([brand?.name,item.status,item.channel].filter(Boolean).join(' · ')))+'</small></div><div class="record-actions"><button data-edit="'+esc(item.id)+'" data-kind="'+esc(kind)+'">editar</button><button class="remove" data-remove="'+esc(item.id)+'" data-kind="'+esc(kind)+'">excluir</button></div></article>';
+}
+function render(){
+ options();
+ $('stat-brands').textContent=state.brands.length;
+ for(const [kind,id] of [['conteudo','stat-content'],['tarefa','stat-tasks'],['campanha','stat-campaigns']])$(id).textContent=state.items.filter(i=>i.kind===kind).length;
+ const soon=state.items.filter(i=>i.status!=='concluido'&&i.due_date).sort((a,b)=>a.due_date.localeCompare(b.due_date)).slice(0,6);
+ $('upcoming').innerHTML=soon.length?soon.map(i=>row(i,i.kind)).join(''):empty('Sem entregas com prazo cadastradas.');
+ const view=state.view, l=labels[view];
+ $('page-title').innerHTML=esc(l[0])+'<br/><em>'+esc(l[1])+'</em>';$('page-summary').textContent=l[2];$('crumb').textContent='ARQUIVOS / '+view.toUpperCase();
+ show('dashboard-panel',view==='dashboard');show('list-panel',view!=='dashboard');
+ const bf=$('brand-filter').value,sf=$('status-filter').value;
+ const collection=view==='marcas'?state.brands:state.items.filter(i=>i.kind===view&&(bf===''||i.brand_id===bf)&&(sf===''||i.status===sf));
+ $('status-filter').classList.toggle('hidden',view==='marcas');$('brand-filter').classList.toggle('hidden',view==='marcas');
+ $('records').innerHTML=collection.length?collection.map(i=>row(i,view)).join(''):empty('Nada por aqui ainda. Crie seu primeiro registro!');
+ $$('[data-view]').forEach(n=>n.classList.toggle('selected',n.dataset.view===view));
+}
+function navigate(view){state.view=view;$('brand-filter').value='';$('status-filter').value='';render();history.replaceState(null,'','#'+view);}
+function open(kind,id=''){
+ state.editingKind=kind;const isBrand=kind==='marcas';const obj=id?(isBrand?state.brands:state.items).find(i=>i.id===id):null;
+ $('editor-title').textContent=(obj?'Editar ':'Novo ')+(isBrand?'marca':({conteudo:'conteúdo',tarefa:'tarefa',campanha:'campanha'}[kind]));
+ $('item-fields').classList.toggle('hidden',isBrand);$('item-id').value=obj?.id||'';$('item-title').value=(isBrand?obj?.name:obj?.title)||'';$('item-description').value=obj?.description||'';
+ $('item-brand').value=obj?.brand_id||'';$('item-status').value=obj?.status||'ideia';$('item-date').value=obj?.due_date||'';$('item-channel').value=obj?.channel||'';
+ $('item-title').focus();say('editor-message','');$('editor').showModal();
+}
+async function remove(kind,id){
+ if(!confirm('Excluir este registro? Esta ação não pode ser desfeita.'))return;
+ try{const {error}=await db.from(kind==='marcas'?'brands':'work_items').delete().eq('id',id).eq('user_id',state.user.id);if(error)throw error;await load();say('global-message','Registro excluído.');}
+ catch(e){say('global-message','Não foi possível excluir: '+e.message);}
+}
+$('editor-form').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const kind=state.editingKind,isBrand=kind==='marcas',id=$('item-id').value,title=$('item-title').value.trim();
+ if(!title)return say('editor-message','Informe um título.');
+ const table=isBrand?'brands':'work_items',payload=isBrand?{name:title,description:$('item-description').value}:{title,description:$('item-description').value,kind,brand_id:$('item-brand').value||null,status:$('item-status').value,due_date:$('item-date').value||null,channel:$('item-channel').value.trim()};
+ $('save-item').disabled=true;
+ try{const query=id?db.from(table).update(payload).eq('id',id).eq('user_id',state.user.id):db.from(table).insert({...payload,user_id:state.user.id});const {error}=await query;if(error)throw error;$('editor').close();await load();say('global-message','Registro salvo.');}
+ catch(e){say('editor-message','Erro ao salvar: '+e.message)}
+ finally{$('save-item').disabled=false;}
+});
+$('login').addEventListener('submit',async e=>{e.preventDefault();say('auth-message','Entrando...');const {error}=await db.auth.signInWithPassword({email:$('email').value,password:$('password').value});if(error)say('auth-message','Não foi possível entrar: '+error.message);});
+$('logout').addEventListener('click',async()=>{await db.auth.signOut();});
+$('close-editor').addEventListener('click',()=>$('editor').close());
+$('editor').addEventListener('click',e=>{if(e.target===$('editor'))$('editor').close()});
+$$('[data-view]').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.view)));
+$('brand-filter').addEventListener('change',render);$('status-filter').addEventListener('change',render);
+$('quick-add').addEventListener('click',()=>open(state.view==='dashboard'?'tarefa':state.view));
+$('new-in-view').addEventListener('click',()=>open(state.view));
+$('upcoming').addEventListener('click',handle);$('records').addEventListener('click',handle);
+function handle(e){const b=e.target.closest('[data-edit],[data-remove]');if(!b)return;const kind=b.dataset.kind,id=b.dataset.edit||b.dataset.remove;b.dataset.edit?open(kind,id):remove(kind,id);}
+$$('[data-create]').forEach(b=>b.addEventListener('click',()=>open(b.dataset.create)));
+async function authUpdate(session){
+ const user=session?.user;state.user=user||null;show('loading',false);
+ if(!db){show('auth',true);say('auth-message','Configuração pendente: conectar Supabase pessoal e publicar variáveis de ambiente.');$('login').querySelector('button').disabled=true;return;}
+ show('auth',!user);show('workspace',!!user);
+ if(user){$('account-email').textContent=user.email||'Conta pessoal';try{await load();}catch(e){say('global-message','Falha ao carregar dados: '+e.message);}}
+}
+if(db){db.auth.getSession().then(({data})=>authUpdate(data.session));db.auth.onAuthStateChange((event,session)=>{if(['SIGNED_IN','SIGNED_OUT','TOKEN_REFRESHED'].includes(event))setTimeout(()=>authUpdate(session),0);});}else authUpdate(null);
+</script>
+</body></html>
+<style>
+.salad-app{min-height:100vh;color:var(--off,#F5F2EF);--line:#39363d}.hidden{display:none!important}.loading{padding:36px;font-size:13px}.mark{font-size:26px;font-weight:900;letter-spacing:-.07em}.mark span{color:var(--pink)}.eyebrow{font-size:10px;font-weight:800;letter-spacing:.13em;color:#b0aab2}.auth{max-width:520px;padding:60px 24px;margin:5vh auto}.auth>.eyebrow{display:block;margin-top:60px}.auth h1,.headline h1{font-size:clamp(52px,7vw,98px);letter-spacing:-.085em;line-height:.92;margin:20px 0}.auth h1 em,.headline h1 em{color:var(--pink)}.auth p,.headline p{color:#b8b1ba;line-height:1.55;margin:18px 0 32px}.auth form,#editor-form{display:grid;gap:12px}.auth label,#editor label{font-size:10px;font-weight:900;letter-spacing:.12em;margin-top:12px}input,select,textarea{min-width:0;width:100%;padding:14px 12px;border:1px solid #5b535e;border-radius:0;background:#1b171e;color:#f5f2ef;font:inherit}input:focus,select:focus,textarea:focus{outline:2px solid var(--acid)}button{font:inherit;cursor:pointer}.primary{border:0;background:var(--acid);color:#161519;font-weight:900;padding:16px;margin-top:16px}.feedback{color:var(--acid)!important;font-size:12px}.back{display:inline-block;font-size:12px;margin-top:30px}.workspace{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}.side{position:sticky;top:0;height:100vh;border-right:1px solid var(--line);padding:28px 18px;display:flex;flex-direction:column;gap:28px;background:#151218}.main-nav{display:grid;gap:6px}.main-nav button{border:0;background:transparent;color:#d5cfd6;text-align:left;padding:15px;font-size:13px;font-weight:700}.main-nav button.selected,.main-nav button:hover{background:var(--pink);color:#120e14}.side-bottom{margin-top:auto;display:grid;gap:12px;overflow-wrap:anywhere}.side-bottom small{color:#a9a5ac}.side-bottom button{background:transparent;color:var(--acid);border:1px solid #575158;padding:10px;text-align:left}.main{min-width:0}.app-top{height:73px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 4vw}.mobile-mark{display:none}.new{background:var(--acid);border:0;color:#181619;font-size:11px;font-weight:900;padding:12px 17px}.main-content{max-width:1300px;margin:auto;padding:52px 4vw 120px}.headline{margin-bottom:42px}.headline p{margin:15px 0 0}.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat-grid>div{border:1px solid #5a525d;min-height:145px;padding:18px;display:flex;flex-direction:column;gap:12px}.stat-grid small{font-size:10px;font-weight:900;letter-spacing:.12em}.stat-grid strong{font-size:63px;line-height:1;letter-spacing:-.06em}.stat-grid .pink{background:var(--pink);color:#0f0b10}.section-title{display:flex;align-items:center;justify-content:space-between;margin-top:65px;border-bottom:1px solid var(--line);padding-bottom:13px;gap:10px;font-size:11px;font-weight:900;letter-spacing:.1em}.section-title button{background:transparent;border:0;color:var(--acid);font-size:11px}.items{margin-top:20px}.record{display:flex;gap:15px;justify-content:space-between;align-items:center;border:1px solid var(--line);padding:19px;margin-bottom:9px}.record-content{min-width:0}.record h3{font-size:20px;margin:8px 0;letter-spacing:-.04em;overflow-wrap:anywhere}.record small{color:#b4aeb8;overflow-wrap:anywhere}.record-actions{display:flex;flex-wrap:wrap;gap:7px}.record-actions button{border:1px solid #635c64;background:transparent;color:#eee;padding:8px 10px;font-size:11px}.record-actions .remove{color:#f5a7c9}.empty{padding:45px 22px;border:1px dashed #67606b;color:#a9a5ac}.empty span{font-size:10px;color:var(--acid);letter-spacing:.14em}.empty p{font-size:18px;margin-top:18px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:25px}.toolbar select{flex:1;max-width:230px;font-size:12px}.mobile-nav{display:none}dialog{background:#17131b;color:#f5f2ef;border:1px solid #625a63;width:min(520px,calc(100vw - 28px));max-height:90dvh;overflow:auto;padding:25px}dialog::backdrop{background:#000b}.dialog-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}.dialog-head h2{font-size:35px;margin-top:10px;letter-spacing:-.06em}.dialog-head button{background:transparent;color:white;border:1px solid #645c68;font-size:24px;width:40px;height:40px}.field-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field-pair>div{display:grid;gap:9px}
+@media(max-width:1000px){.stat-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.workspace{display:block}.side{display:none}.app-top{height:65px;padding:0 18px}.mobile-mark{display:block;font-size:19px}.app-top>.eyebrow{display:none}.main-content{padding:36px 18px 130px}.headline h1{font-size:clamp(49px,11.5vw,74px)}.stat-grid>div{min-height:110px;padding:14px}.stat-grid strong{font-size:44px}.mobile-nav{position:fixed;z-index:10;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:#171219;border-top:1px solid var(--line);padding:7px 4px calc(7px + env(safe-area-inset-bottom))}.mobile-nav button{background:transparent;border:0;color:#aaa4ae;display:flex;flex-direction:column;gap:4px;align-items:center;font-size:9px;padding:7px 0}.mobile-nav button span{font-size:23px}.mobile-nav button.selected{color:var(--acid)}.record{align-items:flex-start;flex-direction:column}.toolbar select{flex-basis:40%;max-width:none}.section-title{margin-top:42px}.auth{margin:0 auto;padding-top:35px}}@media(max-width:370px){.toolbar select{flex-basis:100%}.field-pair{grid-template-columns:1fr}}
+</style>
