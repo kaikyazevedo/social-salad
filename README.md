@@ -1,21 +1,21 @@
 # Social Salad
 
-**Meu espaço pessoal de organização de trabalho, projetos e clientes.**
+Um espaço **pessoal e mobile-first** para organizar o trabalho com marcas e clientes: planejamento de conteúdo, coleções/campanhas, identidade visual e projetos.
 
-Aplicação mobile-first para administrar conteúdo, campanhas, coleções, identidade visual, arquivos e atividades dos projetos que acompanho. O foco é um painel **para meu próprio uso**; não é uma ferramenta de contratos ou de venda.
+## Iniciar
+1. Instale Node.js 20.19+.
+2. Rode `npm install`.
+3. Rode `npm run dev`.
+4. Abra `http://localhost:4321`.
 
-## Estrutura
+## Rotas
+- `/`: Home de apresentação do Social Salad.
+- `/demo`: demonstração navegável do painel, com **dados 100% fictícios**.
 
-- `src/pages/` — telas da aplicação Astro.
-- `src/styles/` — identidade visual e responsividade.
-- `sql/` — roteiro de banco de dados de um Supabase pessoal, **nunca no projeto THAC**.
+**O painel é uma demonstração, não um sistema autenticado**. Não insira dados privados de clientes.
 
-## Desenvolvimento
+## Próxima etapa
+Criar Supabase pessoal (separado da THAC), implementar acesso exclusivo do proprietário, CRUD de clientes e planejamento, upload privado e políticas RLS. Hospedagem independente e validação de segurança antes de usar informações reais.
 
-`npm install` e `npm run dev` para rodar localmente. Publicação e banco pessoais serão configurados separadamente.
-
-## Segurança
-
-Não comite `.env`, tokens, chaves secretas ou informações reais de clientes. Área privada e operações com dados reais exigem autenticação, permissões e testes das políticas RLS.
-
-**Status:** estrutura em construção; ainda não é um painel com dados reais.
+## Código e segredos
+Nunca versionar chaves sensíveis ou variáveis .env. Projeto pessoal separado de THAC Production OS.
