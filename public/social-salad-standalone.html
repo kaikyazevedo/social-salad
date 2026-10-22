@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0d0c10"><meta name="description" content="Social Salad — espaço pessoal criativo, versão demonstrativa"><title>Social Salad — Meu espaço</title>
+<style>
+:root{font-family:Arial,Helvetica,sans-serif;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit}button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #4161ef;outline-offset:2px}
+#app{--bg:#0d0c10;--surface:#17151b;--surface2:#242028;--text:#f5f2ef;--muted:#b0aab4;--line:#433d47;--dots:#ffffff16;--primary:#eafa29;--primary-text:#141411;--pink:#ef2ec4;--blue:#4161ef;background:var(--bg);color:var(--text);min-height:100vh}
+#app[data-theme="light"]{--bg:#f7f4ee;--surface:#fffdfa;--surface2:#ede9e4;--text:#191719;--muted:#6b666c;--line:#d1cac8;--dots:#00000028;--primary:#4161ef;--primary-text:#fff}
+.mono{font:800 10px/1.5 "Courier New",monospace;letter-spacing:.06em;text-transform:uppercase}
+.serif{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-weight:700}
+.brand{font-weight:900;letter-spacing:-.07em;font-size:26px;text-decoration:none;color:var(--text)}.brand em{color:var(--primary);font-style:italic}.brand b{color:var(--pink)}
+.dots{background-image:radial-gradient(var(--dots) 1px,transparent 1px);background-size:10px 10px}
+.top-notice{display:flex;justify-content:space-between;gap:10px;background:var(--surface2);border-bottom:1px solid var(--line);padding:8px 18px;color:var(--muted);font-size:10px}
+.top-notice strong{color:var(--primary)}
+.top-notice button{color:var(--text);border:0;background:transparent;text-decoration:underline}
+.layout{display:grid;grid-template-columns:225px minmax(0,1fr);min-height:calc(100vh - 35px)}
+.sidebar{background:var(--surface);border-right:1px solid var(--line);padding:29px 15px;display:flex;flex-direction:column;gap:30px}
+.side-title{margin:0 9px 14px;color:var(--muted)}.nav{display:grid;gap:5px}
+.nav button{display:flex;align-items:center;gap:12px;text-align:left;border:1px solid transparent;padding:14px 12px;background:transparent;color:var(--text);font-size:12px;font-weight:800}
+.nav button i{font-size:17px;font-weight:400;font-style:normal;width:20px}
+.nav button.active{background:var(--primary);color:var(--primary-text)}.nav button:not(.active):hover{background:var(--surface2);border-color:var(--line)}
+.side-note{margin-top:auto;border:1px solid var(--line);background:var(--surface2);padding:17px}
+.side-note span{font-size:39px;color:var(--pink)}.side-note strong{display:block;margin-top:18px;font-size:22px;line-height:1;letter-spacing:-.05em}
+.side-note em{color:var(--primary)}
+.main{min-width:0}.header{height:72px;border-bottom:1px solid var(--line);background:var(--surface);display:flex;justify-content:space-between;align-items:center;gap:12px;padding:0 26px}
+.header-meta{font-size:10px;color:var(--muted)}.header-meta strong{color:var(--text)}
+.header-actions{display:flex;align-items:center;gap:10px}
+.theme-switch{display:flex;background:var(--surface2);border:1px solid var(--line);padding:3px}
+.theme-switch button{border:0;background:transparent;color:var(--muted);font-size:11px;padding:9px 12px;font-weight:800;white-space:nowrap}
+.theme-switch button.active{background:var(--primary);color:var(--primary-text)}
+.primary{background:var(--primary);color:var(--primary-text);border:0;padding:12px 15px;font-weight:900;font-size:11px;text-transform:uppercase}
+.content{padding:40px clamp(18px,4vw,64px) 95px;max-width:1540px;margin:auto;min-width:0}
+.kicker{color:var(--muted)}.kicker b{color:var(--primary);padding-right:6px}
+h1{font-size:clamp(46px,7vw,92px);letter-spacing:-.075em;line-height:.88;margin:17px 0;font-weight:900}h1 em{color:var(--primary)}
+.description{color:var(--muted);font-size:14px;line-height:1.6;max-width:550px;margin:20px 0 30px}
+.hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,.65fr);gap:23px;align-items:center}
+.hero-art{min-height:240px;background:var(--surface2);border:1px solid var(--line);position:relative;display:grid;place-items:center;overflow:hidden}
+.hero-art:before{content:"";position:absolute;background:var(--pink);height:46px;transform:rotate(-11deg);left:-10%;right:-10%;top:23%}
+.hero-art strong{position:relative;z-index:1;font-size:clamp(27px,4vw,53px);letter-spacing:-.09em;line-height:.9;transform:rotate(-6deg);text-shadow:4px 4px var(--blue)}
+.hero-art strong em{display:block;color:var(--primary)}.hero-art small{position:absolute;left:13px;bottom:13px;color:var(--muted)}
+.stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:28px 0 36px}
+.stat{background:var(--surface);border:1px solid var(--line);padding:17px;min-height:137px;display:flex;flex-direction:column;justify-content:space-between}
+.stat strong{font-size:54px;letter-spacing:-.08em;line-height:1}.stat small{color:var(--muted);font-size:11px}.stat.feature{background:var(--primary);color:var(--primary-text);border-color:var(--primary)}.stat.feature small{color:inherit}
+.section-heading{border-bottom:1px solid var(--line);padding:0 0 12px;margin:36px 0 15px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.section-heading button{background:transparent;border:0;color:var(--primary);font-size:11px;font-weight:800}
+.tile-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tile{min-height:154px;border:0;padding:16px;text-align:left;display:flex;flex-direction:column;justify-content:space-between;color:#171017}
+.tile:nth-child(1){background:var(--pink)}.tile:nth-child(2){background:#eafa29}.tile:nth-child(3){background:var(--blue);color:white}
+.tile strong{font-size:clamp(19px,2.2vw,30px);letter-spacing:-.06em;line-height:1}
+.records{display:grid;gap:8px}.record{border:1px solid var(--line);background:var(--surface);padding:17px;display:flex;align-items:center;gap:16px}
+.record .label{font-size:10px;color:var(--muted);margin-bottom:6px}.record h3{font-size:16px;letter-spacing:-.045em;margin:6px 0;overflow-wrap:anywhere}.record p{font-size:12px;line-height:1.4;color:var(--muted);margin:0}
+.record-body{flex:1;min-width:0}.record-actions{display:flex;gap:5px;flex-wrap:wrap}
+.ghost{border:1px solid var(--line);color:var(--text);background:var(--surface2);padding:8px 11px;font-size:11px}
+.delete{color:var(--pink)}
+.check{border:1px solid var(--primary);background:var(--surface);color:var(--primary);width:30px;height:30px;flex-shrink:0}
+.check.done{background:var(--primary);color:var(--primary-text)}
+.status{display:inline-block;border:1px solid var(--line);color:var(--muted);font-size:9px;padding:5px 8px;margin-top:8px;font-weight:800}
+.brand-grid,.campaign-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:24px}
+.brand-card,.campaign-card{background:var(--surface);border:1px solid var(--line);padding:23px;min-height:214px}
+.brand-card .swatch{width:62px;height:9px;margin-bottom:24px}.brand-card h3,.campaign-card h3{font-size:27px;letter-spacing:-.06em;line-height:1;margin:13px 0}
+.brand-card p,.campaign-card p{font-size:12px;color:var(--muted);line-height:1.5}.brand-card .foot{display:flex;gap:8px;justify-content:space-between;align-items:center;margin-top:24px;flex-wrap:wrap}
+.campaign-cover{height:150px;margin:-23px -23px 20px;display:grid;place-items:center;font-size:110px;font-weight:900}
+.control-row{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:24px 0}
+.field{min-height:42px;border:1px solid var(--line);color:var(--text);background:var(--surface);padding:10px 12px;font-size:12px}
+.control-row input{flex:1;min-width:140px;max-width:320px}
+.empty{border:1px dashed var(--line);padding:38px 22px;text-align:center;color:var(--muted)}.empty b{display:block;font-size:40px;color:var(--pink)}.empty p{line-height:1.6}
+.palette{display:flex;gap:8px;margin:22px 0}.palette span{height:75px;flex:1}
+.modal-cover{position:fixed;inset:0;z-index:99;background:#080509bd;display:grid;place-items:center;padding:18px}
+.modal-cover[hidden]{display:none}
+.dialog{background:var(--surface);border:1px solid var(--line);color:var(--text);width:min(500px,100%);max-height:90vh;overflow:auto}
+.dialog-head{display:flex;align-items:center;justify-content:space-between;padding:20px;border-bottom:1px solid var(--line)}
+.dialog-head h2{margin:0;font-size:25px;letter-spacing:-.06em}.dialog form{display:grid;gap:14px;padding:20px}
+.dialog label{display:grid;gap:7px;font-size:11px;font-weight:800}.dialog input,.dialog textarea,.dialog select{width:100%;min-width:0;padding:13px;border:1px solid var(--line);color:var(--text);background:var(--surface2)}
+.dialog textarea{resize:vertical}.modal-actions{display:flex;justify-content:flex-end;gap:10px}
+.info{font-size:12px;color:var(--muted);line-height:1.6}.bottom-nav{display:none}
+@media(max-width:1000px){.layout{grid-template-columns:190px minmax(0,1fr)}.stat-grid{grid-template-columns:repeat(2,1fr)}.content{padding:30px 20px 100px}.hero-art{min-height:185px}}
+@media(max-width:680px){.layout{display:block}.sidebar{display:none}.header{height:62px;padding:0 13px}.header-meta{font-size:9px}.header-actions{gap:5px}.theme-switch button{font-size:10px;padding:8px}.primary{padding:10px 12px}.content{padding:27px 17px 115px}.hero{grid-template-columns:1fr}.hero-art{display:none}h1{font-size:clamp(49px,11vw,72px)}.bottom-nav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--line);padding:8px 4px calc(9px + env(safe-area-inset-bottom));z-index:30}.bottom-nav button{background:transparent;border:0;color:var(--muted);font-size:9px;display:flex;flex-direction:column;gap:4px;align-items:center}.bottom-nav button.active{color:var(--primary)}.bottom-nav span{font-size:22px}.tile-grid{grid-template-columns:repeat(2,1fr)}.record{align-items:flex-start;flex-wrap:wrap}.record-actions{margin-left:auto}}
+@media(max-width:420px){.brand-grid,.campaign-grid{grid-template-columns:1fr}.tile strong{font-size:20px}.header-meta{display:none}.header:before{content:"social salada.";font-weight:900;letter-spacing:-.06em;font-size:17px}.description{font-size:13px}}
+</style></head>
+<body><div id="app" data-theme="dark">
+<div class="top-notice"><span><strong>● PRÉVIA PÚBLICA</strong> / Os dados ficam apenas neste navegador. Não insira informações privadas.</span><button id="reset">reiniciar demo ↻</button></div>
+<div class="layout"><aside class="sidebar"><a class="brand" href="/">social <em>salada</em><b>.</b></a><p class="mono" style="color:var(--muted)">ARQUIVOS SALADA / 001</p><div><div class="side-title mono">MEU ESPAÇO</div><nav class="nav" id="nav"></nav></div><div class="side-note"><span>✳</span><strong>menos coisa<br><em class="serif">espalhada.</em></strong></div></aside>
+<div class="main"><div class="header"><div class="header-meta mono"><strong>SOCIAL SALAD</strong> / <span id="crumb">VISÃO GERAL</span></div><div class="header-actions"><div class="theme-switch"><button id="dark" class="active" aria-pressed="true">☾ Noturno</button><button id="light" aria-pressed="false">☀ LED</button></div><button class="primary" id="new">+ Novo</button></div></div><main class="content dots" id="content"></main></div></div>
+<nav class="bottom-nav" id="bottom-nav" aria-label="Navegação mobile"></nav>
+<div class="modal-cover" id="modal" hidden><div class="dialog" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="dialog-head"><h2 id="modal-title">Novo registro</h2><button class="ghost" id="close" aria-label="Fechar">✕</button></div><form id="form"></form></div></div>
+</div>
+<script>
+(function(){
+"use strict";
+var root=document.getElementById("app"),content=document.getElementById("content");
+var navs=[["dashboard","▦","Início"],["brands","◇","Marcas"],["content","▤","Conteúdo"],["tasks","☑","Tarefas"],["campaigns","✳","Campanhas"],["identity","◈","Identidade"],["files","▥","Biblioteca"]];
+var sample={brands:[{id:"b1",name:"Marca Exemplo",segment:"Moda e lifestyle",color:"#ef2ec4",description:"Espaço fictício para explorar o produto."},{id:"b2",name:"Estúdio Criativo",segment:"Comunicação",color:"#4161ef",description:"Projeto demonstrativo de branding."}],items:[{id:"i1",kind:"content",title:"Reels — bastidores",brand:"b1",status:"production",due:"2026-10-25",description:"Roteiro e edição da campanha."},{id:"i2",kind:"content",title:"Carrossel — manifesto visual",brand:"b2",status:"review",due:"2026-10-28",description:"Arte e copy editorial."},{id:"i3",kind:"tasks",title:"Organizar referências",brand:"b1",status:"idea",due:"2026-10-24",description:"Separar referências da semana."},{id:"i4",kind:"campaigns",title:"Coleção Horizonte",brand:"b1",status:"production",due:"2026-11-13",description:"Pré-lançamento e identidade."}],files:[]};
+var state;try{state=JSON.parse(localStorage.getItem("salad_public_v1"));}catch(e){}
+function clone(x){return JSON.parse(JSON.stringify(x));}
+if(!state||!Array.isArray(state.brands)||!Array.isArray(state.items)||!Array.isArray(state.files))state=clone(sample);
+var page="dashboard",filterBrand="all",filterStatus="all",term="",editing=null;
+var statusLabels={idea:"IDEIA",production:"EM PRODUÇÃO",review:"EM REVISÃO",scheduled:"AGENDADO",done:"CONCLUÍDO"};
+var headings={dashboard:["VISÃO GERAL","ideias em","movimento.","Seu centro de operações criativas. Menos abas abertas, mais espaço para criar."],brands:["MARCAS","cada marca.","um universo.","Um espaço para cada cliente, projeto e história."],content:["PLANEJAMENTO","ideias com","direção.","Pautas, roteiros, formatos e datas de publicação."],tasks:["TAREFAS","o que precisa","acontecer.","Demandas, prazos e próximos passos organizados."],campaigns:["CAMPANHAS","cada ideia tem","uma história.","Coleções e campanhas do conceito à entrega."],identity:["IDENTIDADE","a forma também","comunica.","Paletas, tipografias e linguagem visual das marcas."],files:["BIBLIOTECA","tudo no","seu lugar.","Guarde referências e links úteis para o trabalho."]};
+function $ (id){return document.getElementById(id);}
+function esc(x){return String(x==null?"":x).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function save(){try{localStorage.setItem("salad_public_v1",JSON.stringify(state));}catch(e){}}
+function brand(id){return state.brands.find(function(b){return b.id===id;});}
+function bn(id){var x=brand(id);return x?x.name:"Sem marca";}
+function bt(){return filterBrand==="all"?state.brands:state.brands.filter(function(b){return b.id===filterBrand;});}
+function its(kind){return state.items.filter(function(x){return (!kind||x.kind===kind)&&(filterBrand==="all"||x.brand===filterBrand);});}
+function due(s){return s?new Date(s+"T12:00:00").toLocaleDateString("pt-BR"):"Sem data";}
+function heading(){var t=headings[page];return '<div class="kicker mono"><b>—</b> ARQUIVOS SALADA / '+t[0]+'</div><h1>'+t[1]+'<br><em class="serif">'+t[2]+'</em></h1><p class="description">'+t[3]+'</p>';}
+function section(s){return '<div class="section-heading"><strong class="mono">'+s+'</strong></div>';}
+function empty(kind){return '<div class="empty"><b>✳</b><p>Nenhum registro por aqui. Comece adicionando um item.</p><button class="primary" data-add="'+kind+'">+ Adicionar</button></div>';}
+function record(x){var done=x.status==="done";return '<article class="record">'+(x.kind==="tasks"?'<button class="check '+(done?"done":"")+'" data-toggle="'+esc(x.id)+'" aria-label="Concluir ou reabrir tarefa">'+(done?"✓":"□")+'</button>':'<span style="color:var(--primary)">✳</span>')+'<div class="record-body"><div class="label mono">'+esc(bn(x.brand))+' / '+esc(due(x.due))+'</div><h3>'+esc(x.title)+'</h3><p>'+esc(x.description)+'</p><span class="status">'+esc(statusLabels[x.status]||"IDEIA")+'</span></div><div class="record-actions"><button class="ghost" data-edit="'+esc(x.id)+'">editar</button><button class="ghost delete" data-delete="'+esc(x.id)+'">excluir</button></div></article>';}
+function dashboard(){var data=its(),next=data.filter(function(x){return x.status!=="done"&&x.due;}).sort(function(a,b){return a.due.localeCompare(b.due);}).slice(0,5);
+var cards=[["MARCAS",bt().length,"espaços criativos"],["CONTEÚDOS",its("content").length,"no planejamento"],["TAREFAS",its("tasks").filter(function(x){return x.status!=="done";}).length,"pendentes"],["CAMPANHAS",its("campaigns").length,"em acompanhamento"]];
+return '<div class="hero"><div>'+heading()+'</div><div class="hero-art"><strong>social<em class="serif">salada.</em></strong><small class="mono">PORTFÓLIO / 001</small></div></div><div class="stat-grid">'+cards.map(function(c,i){return '<div class="stat '+(i===1?"feature":"")+'"><span class="mono">'+c[0]+'</span><strong>'+String(c[1]).padStart(2,"0")+'</strong><small>'+c[2]+'</small></div>';}).join("")+'</div>'+
+section("01 / FRENTES DE TRABALHO")+'<div class="tile-grid"><button class="tile" data-page="content"><span class="mono">01 / ESTRATÉGIA ↗</span><strong>planejamento<br>de conteúdo</strong><small class="mono">IDEIA → PUBLICAÇÃO</small></button><button class="tile" data-page="campaigns"><span class="mono">02 / CRIAÇÃO ↗</span><strong>coleções &<br>campanhas</strong><small class="mono">CONCEITO → ENTREGA</small></button><button class="tile" data-page="identity"><span class="mono">03 / UNIVERSO ↗</span><strong>identidade<br>visual</strong><small class="mono">REFERÊNCIAS</small></button></div>'+
+section("02 / PRÓXIMAS ENTREGAS")+'<div class="records">'+(next.length?next.map(record).join(""):empty("tasks"))+'</div>';
+}
+function brands(){return heading()+'<div class="control-row"><button class="primary" data-add="brands">+ Nova marca</button></div><div class="brand-grid">'+bt().map(function(b){return '<article class="brand-card"><div class="swatch" style="background:'+esc(b.color)+'"></div><span class="mono" style="color:var(--muted)">MARCA / ARQUIVO</span><h3>'+esc(b.name)+'</h3><p>'+esc(b.segment)+'</p><p>'+esc(b.description)+'</p><div class="foot"><span class="mono">'+state.items.filter(function(i){return i.brand===b.id;}).length+' REGISTROS</span><div><button class="ghost" data-edit-brand="'+esc(b.id)+'">editar</button> <button class="ghost" data-open-brand="'+esc(b.id)+'">abrir ↗</button></div></div></article>';}).join("")+'</div>';}
+function list(kind){var data=its(kind).filter(function(x){return (filterStatus==="all"||x.status===filterStatus)&&(!term||(x.title+" "+x.description+" "+bn(x.brand)).toLowerCase().includes(term.toLowerCase()));});
+return heading()+'<div class="control-row"><input class="field" id="search" placeholder="Pesquisar..." value="'+esc(term)+'" aria-label="Pesquisar"><select class="field" id="brandfilter" aria-label="Filtrar marca"><option value="all">Todas as marcas</option>'+state.brands.map(function(b){return '<option value="'+esc(b.id)+'" '+(filterBrand===b.id?"selected":"")+'>'+esc(b.name)+'</option>';}).join("")+'</select><select class="field" id="statusfilter" aria-label="Filtrar status"><option value="all">Todos os status</option>'+Object.entries(statusLabels).map(function(p){return '<option value="'+p[0]+'" '+(filterStatus===p[0]?"selected":"")+'>'+p[1]+'</option>';}).join("")+'</select><button class="primary" data-add="'+kind+'">+ Adicionar</button></div>'+section(kind==="content"?"REGISTROS / CONTEÚDOS":"REGISTROS / TAREFAS")+'<div class="records">'+(data.length?data.map(record).join(""):empty(kind))+'</div>';
+}
+function campaigns(){var data=its("campaigns");return heading()+'<div class="control-row"><button class="primary" data-add="campaigns">+ Nova campanha</button></div><div class="campaign-grid">'+data.map(function(x){return '<article class="campaign-card"><div class="campaign-cover" style="background:linear-gradient(135deg,'+esc(brand(x.brand)?.color||"#ef2ec4")+',#20192d);color:#fff">✳</div><span class="mono">'+esc(bn(x.brand))+'</span><h3>'+esc(x.title)+'</h3><p>'+esc(x.description)+'</p><span class="status">'+esc(statusLabels[x.status])+'</span><div style="margin-top:18px"><button class="ghost" data-edit="'+esc(x.id)+'">editar ↗</button> <button class="ghost delete" data-delete="'+esc(x.id)+'">excluir</button></div></article>';}).join("")+'</div>'+(data.length?"":empty("campaigns"));}
+function identity(){var b=filterBrand==="all"?state.brands[0]:brand(filterBrand);return heading()+(b?'<div class="control-row"><select class="field" id="identitybrand" aria-label="Selecionar marca">'+state.brands.map(function(x){return '<option value="'+esc(x.id)+'" '+(x.id===b.id?"selected":"")+'>'+esc(x.name)+'</option>';}).join("")+'</select><button class="primary" data-edit-brand="'+esc(b.id)+'">Editar marca</button></div><div class="brand-card"><span class="mono">01 / CARTELA DE CORES</span><div class="palette"><span style="background:'+esc(b.color)+'"></span><span style="background:#ef2ec4"></span><span style="background:#eafa29"></span><span style="background:#4161ef"></span><span style="background:#0d0c10"></span></div><p>Cor cadastrada: '+esc(b.color)+' · demais cores ilustrativas.</p></div><div class="brand-card" style="margin-top:15px"><span class="mono">02 / TIPOGRAFIA EDITORIAL</span><div style="font-size:clamp(35px,6vw,70px);font-weight:900;letter-spacing:-.07em">Aa <em class="serif" style="color:var(--pink)">Aa.</em></div><p>Tipografia de referência para o sistema visual.</p></div>':empty("brands"));}
+function files(){var data=state.files.filter(function(f){return filterBrand==="all"||f.brand===filterBrand;});return heading()+'<div class="control-row"><button class="primary" data-add="files">+ Novo link</button></div><p class="info">Nesta prévia, a biblioteca guarda apenas links no navegador. Não envie arquivos confidenciais.</p><div class="records">'+(data.length?data.map(function(f){return '<div class="record"><div class="record-body"><div class="mono">▥ / '+esc(bn(f.brand))+'</div><h3>'+esc(f.title)+'</h3><p>'+esc(f.url)+'</p></div><div class="record-actions"><button class="ghost" data-link="'+esc(f.id)+'">abrir ↗</button><button class="ghost" data-edit-file="'+esc(f.id)+'">editar</button><button class="ghost delete" data-delete-file="'+esc(f.id)+'">excluir</button></div></div>';}).join(""):empty("files"))+'</div>';}
+function render(){
+$("crumb").textContent=headings[page][0];
+function buttons(list){return list.map(function(n){return '<button data-page="'+n[0]+'" class="'+(page===n[0]?"active":"")+'"><i>'+n[1]+'</i>'+n[2]+'</button>';}).join("");}
+$("nav").innerHTML=buttons(navs);$("bottom-nav").innerHTML=navs.slice(0,5).map(function(n){return '<button data-page="'+n[0]+'" class="'+(page===n[0]?"active":"")+'"><span>'+n[1]+'</span>'+n[2]+'</button>';}).join("");
+$("new").dataset.add=["brands","content","tasks","campaigns","files"].includes(page)?page:"content";
+content.innerHTML=({dashboard:dashboard,brands:brands,content:function(){return list("content");},tasks:function(){return list("tasks");},campaigns:campaigns,identity:identity,files:files})[page]();
+}
+function navigate(p){if(!headings[p])return;page=p;term="";filterStatus="all";render();window.scrollTo({top:0,behavior:"smooth"});}
+function modal(kind,id){
+var old=kind==="brands"?state.brands.find(function(b){return b.id===id;}):kind==="files"?state.files.find(function(f){return f.id===id;}):state.items.find(function(i){return i.id===id;});
+editing={kind:kind,id:id};$("modal-title").textContent=(id?"Editar ":"Novo ")+(kind==="brands"?"marca":kind==="tasks"?"tarefa":kind==="campaigns"?"campanha":kind==="files"?"link":"conteúdo");
+var m='<label>NOME / TÍTULO<input name="title" required maxlength="160" value="'+esc(old?.name||old?.title||"")+'"></label>';
+if(kind==="brands")m+='<label>SEGMENTO<input name="segment" value="'+esc(old?.segment||"")+'"></label><label>COR PRINCIPAL<input type="color" name="color" value="'+esc(old?.color||"#ef2ec4")+'"></label>';
+else{
+m+='<label>MARCA<select name="brand"><option value="">Sem marca</option>'+state.brands.map(function(b){return '<option value="'+esc(b.id)+'" '+(b.id===old?.brand?"selected":"")+'>'+esc(b.name)+'</option>';}).join("")+'</select></label>';
+if(kind==="files")m+='<label>URL DO MATERIAL<input type="url" name="url" value="'+esc(old?.url||"")+'" placeholder="https://..."></label>';
+else m+='<label>STATUS<select name="status">'+Object.entries(statusLabels).map(function(p){return '<option value="'+p[0]+'" '+((old?.status||"idea")===p[0]?"selected":"")+'>'+p[1]+'</option>';}).join("")+'</select></label><label>DATA<input name="due" type="date" value="'+esc(old?.due||"")+'"></label>';
+}
+if(kind!=="files")m+='<label>DESCRIÇÃO<textarea name="description" rows="3" maxlength="3000">'+esc(old?.description||"")+'</textarea></label>';
+m+='<div class="modal-actions"><button type="button" class="ghost" id="cancel">Cancelar</button><button type="submit" class="primary">Salvar ↗</button></div>';
+$("form").innerHTML=m;$("modal").hidden=false;$("form").querySelector("input[name=title]").focus();
+}
+function close(){$("modal").hidden=true;editing=null;}
+function newid(prefix){return prefix+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+$("form").addEventListener("submit",function(e){e.preventDefault();if(!editing)return;
+var k=editing.kind,id=editing.id,fd=new FormData(e.currentTarget),title=String(fd.get("title")||"").trim();if(!title)return;
+var arr=k==="brands"?state.brands:k==="files"?state.files:state.items;
+var payload=k==="brands"?{name:title,segment:String(fd.get("segment")||""),color:String(fd.get("color")||"#ef2ec4"),description:String(fd.get("description")||"")}:
+k==="files"?{title:title,brand:String(fd.get("brand")||""),url:String(fd.get("url")||"")}:
+{title:title,kind:k,brand:String(fd.get("brand")||""),status:String(fd.get("status")||"idea"),due:String(fd.get("due")||""),description:String(fd.get("description")||"")};
+if(id){var row=arr.find(function(x){return x.id===id;});if(row)Object.assign(row,payload);}else arr.unshift(Object.assign({id:newid(k)},payload));
+save();close();render();
+});
+root.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
+if(b.dataset.page){navigate(b.dataset.page);return;}
+if(b.dataset.add){modal(b.dataset.add);return;}
+if(b.dataset.edit){var x=state.items.find(function(a){return a.id===b.dataset.edit;});if(x)modal(x.kind,x.id);return;}
+if(b.dataset.editBrand){modal("brands",b.dataset.editBrand);return;}
+if(b.dataset.editFile){modal("files",b.dataset.editFile);return;}
+if(b.dataset.openBrand){filterBrand=b.dataset.openBrand;navigate("content");return;}
+if(b.dataset.toggle){var x=state.items.find(function(a){return a.id===b.dataset.toggle;});if(x){x.status=x.status==="done"?"idea":"done";save();render();}return;}
+if(b.dataset.delete||b.dataset.deleteFile){var isFile=!!b.dataset.deleteFile,id=b.dataset.deleteFile||b.dataset.delete;var arr=isFile?state.files:state.items;var x=arr.find(function(a){return a.id===id;});if(x&&confirm('Excluir "'+x.title+'"?')){if(isFile)state.files=arr.filter(function(a){return a.id!==id;});else state.items=arr.filter(function(a){return a.id!==id;});save();render();}return;}
+if(b.dataset.link){var f=state.files.find(function(x){return x.id===b.dataset.link;});if(f){try{var u=new URL(f.url);if(u.protocol==="https:"||u.protocol==="http:")window.open(u.href,"_blank","noopener,noreferrer");}catch(e){alert("Link inválido");}}return;}
+if(b.id==="close"||b.id==="cancel"){close();return;}
+if(b.id==="dark"||b.id==="light"){root.dataset.theme=b.id;localStorage.setItem("salad_theme",b.id);$("dark").classList.toggle("active",b.id==="dark");$("light").classList.toggle("active",b.id==="light");$("dark").setAttribute("aria-pressed",String(b.id==="dark"));$("light").setAttribute("aria-pressed",String(b.id==="light"));return;}
+if(b.id==="reset"&&confirm("Reiniciar os dados de demonstração deste navegador?")){state=clone(sample);page="dashboard";filterBrand="all";filterStatus="all";term="";save();render();}
+});
+root.addEventListener("change",function(e){
+if(e.target.id==="brandfilter"||e.target.id==="identitybrand"){filterBrand=e.target.value;render();}
+if(e.target.id==="statusfilter"){filterStatus=e.target.value;render();}
+});
+root.addEventListener("input",function(e){if(e.target.id==="search"){var pos=e.target.selectionStart;term=e.target.value;render();var input=$("search");if(input){input.focus();input.setSelectionRange(pos,pos);}}});
+$("modal").addEventListener("click",function(e){if(e.target===$("modal"))close();});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!$("modal").hidden)close();});
+try{var theme=localStorage.getItem("salad_theme");if(theme==="light"){$("light").click();}}catch(e){}
+render();
+})();
+</script></body></html>
