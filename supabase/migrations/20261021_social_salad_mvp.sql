@@ -49,6 +49,7 @@ create table private.authorized_emails (
   email text primary key check (email = lower(email))
 );
 revoke all on private.authorized_emails from public, anon, authenticated;
+alter table private.authorized_emails enable row level security;
 
 -- Explicit allowlist + verified email: other Supabase Auth accounts cannot read/write even their own rows.
 -- Kept in the unexposed private schema; never accept user-supplied email as authority.
