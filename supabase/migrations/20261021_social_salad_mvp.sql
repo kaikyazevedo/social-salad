@@ -41,16 +41,41 @@ end $$;
 create trigger ensure_item_brand_owner before insert or update on public.work_items
 for each row execute function public.check_work_item_brand_owner();
 
+
+-- This is a single-owner system. Public clients cannot see the allowlist.
+create schema if not exists private;
+revoke all on schema private from public, anon;
+create table private.authorized_emails (
+  email text primary key check (email = lower(email))
+);
+revoke all on private.authorized_emails from public, anon, authenticated;
+
+-- Explicit allowlist + verified email: other Supabase Auth accounts cannot read/write even their own rows.
+-- Kept in the unexposed private schema; never accept user-supplied email as authority.
+create or replace function private.is_authorized() returns boolean
+language sql stable security definer set search_path = ''
+as $
+  select exists (
+    select 1 from auth.users u
+    join private.authorized_emails allowlist on allowlist.email = lower(u.email)
+    where u.id = (select auth.uid())
+      and u.email_confirmed_at is not null
+  );
+$;
+revoke all on function private.is_authorized() from public, anon;
+grant usage on schema private to authenticated;
+grant execute on function private.is_authorized() to authenticated;
+
 alter table public.brands enable row level security;
 alter table public.work_items enable row level security;
-create policy "brands_select_own" on public.brands for select to authenticated using ((select auth.uid())=user_id);
-create policy "brands_insert_own" on public.brands for insert to authenticated with check ((select auth.uid())=user_id);
-create policy "brands_update_own" on public.brands for update to authenticated using ((select auth.uid())=user_id) with check ((select auth.uid())=user_id);
-create policy "brands_delete_own" on public.brands for delete to authenticated using ((select auth.uid())=user_id);
-create policy "items_select_own" on public.work_items for select to authenticated using ((select auth.uid())=user_id);
-create policy "items_insert_own" on public.work_items for insert to authenticated with check ((select auth.uid())=user_id);
-create policy "items_update_own" on public.work_items for update to authenticated using ((select auth.uid())=user_id) with check ((select auth.uid())=user_id);
-create policy "items_delete_own" on public.work_items for delete to authenticated using ((select auth.uid())=user_id);
+create policy "brands_select_own" on public.brands for select to authenticated using ((select auth.uid())=user_id and (select private.is_authorized()));
+create policy "brands_insert_own" on public.brands for insert to authenticated with check ((select auth.uid())=user_id and (select private.is_authorized()));
+create policy "brands_update_own" on public.brands for update to authenticated using ((select auth.uid())=user_id and (select private.is_authorized())) with check ((select auth.uid())=user_id and (select private.is_authorized()));
+create policy "brands_delete_own" on public.brands for delete to authenticated using ((select auth.uid())=user_id and (select private.is_authorized()));
+create policy "items_select_own" on public.work_items for select to authenticated using ((select auth.uid())=user_id and (select private.is_authorized()));
+create policy "items_insert_own" on public.work_items for insert to authenticated with check ((select auth.uid())=user_id and (select private.is_authorized()));
+create policy "items_update_own" on public.work_items for update to authenticated using ((select auth.uid())=user_id and (select private.is_authorized())) with check ((select auth.uid())=user_id and (select private.is_authorized()));
+create policy "items_delete_own" on public.work_items for delete to authenticated using ((select auth.uid())=user_id and (select private.is_authorized()));
 grant usage on schema public to authenticated;
 grant select,insert,update,delete on public.brands, public.work_items to authenticated;
 revoke all on public.brands,public.work_items from anon;
