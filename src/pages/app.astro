@@ -6,8 +6,8 @@ const key = import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY || '';
 <html lang="pt-BR">
 <head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Meu espaço / Social Salad</title><meta name="robots" content="noindex,nofollow"/></head>
 <body class="salad-app dots" data-url={url} data-key={key} data-theme="dark">
-<div class="loading" id="loading">social salad / abrindo seu espaço...</div>
-<section class="auth hidden" id="auth">
+<div class="loading hidden" id="loading" aria-live="polite">social salad / abrindo seu espaço...</div>
+<section class="auth" id="auth">
  <div class="theme-controls" role="group" aria-label="Aparência"><button type="button" data-mode="dark" class="active" aria-pressed="true">☾ Noturno</button><button type="button" data-mode="light" aria-pressed="false">☀ LED</button></div>
  <a href="/portfolio" class="mark">✳ social<span>salad</span>.</a>
  <span class="eyebrow">ARQUIVOS SALADA / ACESSO PRIVADO</span>
@@ -58,8 +58,8 @@ const key = import.meta.env.PUBLIC_SUPABASE_PUBLISHABLE_KEY || '';
 <label for="item-description">DESCRIÇÃO</label><textarea id="item-description" name="description" rows="4" maxlength="10000"></textarea>
 <p class="feedback" id="editor-message" role="status"></p><button class="primary" type="submit" id="save-item">salvar ↗</button>
 </form></dialog>
-<script type="module" is:inline>
-import {createClient} from 'https://esm.sh/@supabase/supabase-js@2.57.0';
+<script>
+import { createClient } from '@supabase/supabase-js';
 const $=id=>document.getElementById(id), $$=s=>[...document.querySelectorAll(s)];
 const url=document.body.dataset.url,key=document.body.dataset.key;
 const db=url&&key?createClient(url,key):null;
